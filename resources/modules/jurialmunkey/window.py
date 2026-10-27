@@ -226,8 +226,15 @@ class WindowChecker():
         return False
 
     def get_window_property(self, key, is_type=None, is_home=False, is_id=0):
+        if not is_home and not is_id:
+            if self.current_window in DIALOG_ID_EXCLUDELIST:
+                return
+            return try_type(
+                xbmc.getInfoLabel(f'Window({self.current_window}).Property(TMDbHelper.{key})'),
+                is_type or str)
+
         try:
-            window = xbmcgui.Window(is_id or 10000) if is_home or is_id else xbmcgui.Window(self.current_window)
+            window = xbmcgui.Window(is_id or 10000)
         except RuntimeError:
             return
         if not window:
